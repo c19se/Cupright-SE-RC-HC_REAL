@@ -1,2 +1,1 @@
-"I work at starbucks";
-"Hi"
+"We Just Wasted All Of Class Time Learning This";
