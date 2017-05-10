@@ -59,7 +59,7 @@ public class CuprightCoffee{
 			boolean hourly = false;
 			if(hoursLeft == 0)hourly = true;//if hours is set to 0 then the reports go hour by hour
 
-			CoffeeShop cupright = new CoffeeShop(30,30,3,10,10);//initialize coffee shop (customerRange, customerBase, numEmployees, serviceRange, serviceBase)
+			CoffeeShop cupright = new CoffeeShop(10,7,3,10,7);//initialize coffee shop (customerRange, customerBase, numEmployees, serviceRange, serviceBase)
 			double revenue;//initializes the revenue
 
 			while(hourly || hoursLeft > 0){//continues if it is hourly or if there are more hours left to calculate
@@ -91,7 +91,9 @@ public class CuprightCoffee{
 			System.out.println();
 			System.out.println("Final Report");
 			System.out.println("Total Revenue: " + (cupright.money+(cupright.employees.length*cupright.employees[0].salaryPerHour*hour) ));
-			System.out.println("Final Prifit: " + cupright.money);
+			System.out.println("Final Profit: " + cupright.money);
+			int hypothetical = (int) (cupright.hypo-(cupright.employees.length*cupright.employees[0].salaryPerHour*hour));
+			System.out.println("Hypothetical Final Profit including costs of drinks: " + (hypothetical));
 
 			while(true){
 				System.out.println("Would you like to see another report?(y/n)");
@@ -145,6 +147,7 @@ class CoffeeShop{
 	double money;
 	double startMoney;
 	Employee[] employees;
+	double hypo;
 
 
 	/**
@@ -172,7 +175,9 @@ class CoffeeShop{
 
 		startMoney = money_;
 		for(int i = 0; i < servedThisHour; i++){
-			money_ += Employee.makeCoffee(line.pop());//gives the first person in line to the employee to make coffee.
+			Customer c = line.pop();
+			money_ += Employee.makeCoffee(c,false);//gives the first person in line to the employee to make coffee.
+			hypo += Employee.makeCoffee(c,true);
 		}
 		return money_;
 	}
