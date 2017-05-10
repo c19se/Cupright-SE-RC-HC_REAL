@@ -4,127 +4,106 @@ import java.util.Scanner;
 
 
 public class CuprightCoffee{
-	public static void main(String[] args) throws InterruptedException {
-		int customerRange = 30;
-		int customerBase = 30;
-		int numEmployees = 3;
-		int serviceRange = 10;
-		int serviceBase = 10;
-		
-		Scanner scan = new Scanner(System.in);
-		int hoursLeft = 0;
-		int hourMod;
+	static Scanner scan = new Scanner(System.in);
+	/**
+	 * asks the user if they would like to see hourly reports or a report of a specified amount of days 
+	 * @return the number of days
+	 */
+	static int determineTypeReport(){
+		int numDays = 0;
+		boolean determiningType = true;
+		while(determiningType){
+			determiningType = false;
+			System.out.println("Would you like to see an hourly, daily, 7 day, 4 week, or 52 week report?(h/d/w/m/y)");
+			String reportType = scan.nextLine();
+			switch(reportType){
+			case "h":
+				numDays = 0;
+				break;
+			case "d":
+				numDays = 1;
+				break;
+			case "w":
+				numDays = 7;
+				break;
+			case "m":
+				numDays = 28;
+				break;
+			case "y":
+				numDays = 364;
+				break;
+			default:
+				determiningType = true;//continues loop
+				break;
+			}
+		}
+
+		return numDays;
+	}
+
+	final static int hoursPerDay = 9;
+
+	public static void main(String[] args){
+
+
+
 		boolean continueReports = true;
 		while(continueReports){
-			boolean hourly = false;
+			int hoursLeft = 0;
 			int hour = 0;
-			while(true){
-				System.out.println("Would you like to see an hourly report?(y/n)");
-				String hourlyStr = scan.nextLine();
-				if(hourlyStr.equals("y")){
-					hourly = true;
-					hourMod = 0;
-					break;
-				}
-				System.out.println("Would you like to see an daily report?(y/n)");
-				String dailyStr = scan.nextLine();
-				if(dailyStr.equals("y")){
-					hourMod = 1;
-					break;
-				}System.out.println("Would you like to see an 7 day report report?(y/n)");
-				String weeklyStr = scan.nextLine();
-				if(weeklyStr.equals("y")){
-					hourMod = 7;
-					break;
-				}
-				System.out.println("Would you like to see an 4 week report?(y/n)");
-				String monthlyStr = scan.nextLine();
-				if(monthlyStr.equals("y")){
-					hourMod = 28;
-					break;
-				}
-				System.out.println("Would you like to see an 52 week report?(y/n)");
-				String yearlyStr = scan.nextLine();
-				if(yearlyStr.equals("y")){
-					hourMod = 52*7;
-					break;
-				}
-				
-			}
-			hoursLeft = 9 * hourMod;
+			int numDays = 0;
 
-			Random gen = new Random();
-			LinkedList<Customer> line = new LinkedList<Customer>();
+			numDays = determineTypeReport();//sets the number of days
+			hoursLeft = hoursPerDay * numDays;//sets the number of hours based on the number of days
 
+			boolean hourly = false;
+			if(hoursLeft == 0)hourly = true;//if hours is set to 0 then the reports go hour by hour
 
-			int money = 0;
-			Employee[] employees = new Employee[numEmployees];
+			CoffeeShop cupright = new CoffeeShop(30,30,3,10,10);//initialize coffee shop (customerRange, customerBase, numEmployees, serviceRange, serviceBase)
+			double revenue;//initializes the revenue
 
-
-			while(hourly || hoursLeft > 0){
+			while(hourly || hoursLeft > 0){//continues if it is hourly or if there are more hours left to calculate
+				revenue=0;//resets revenue
 				hoursLeft--;
 				hour++;
-				//			System.err.println("leftOvers: "+ line.size());
-				int servedThisHour = 0;
-				money -= employees.length*Employee.salaryPerHour;
-
-
-				for(int i = 0; i<employees.length;i++){
-					employees[i] = new Employee(gen.nextInt(serviceRange)+serviceBase);
-					servedThisHour += employees[i].peoplePerHour;
-				}
-				//			System.err.println("amountThisHour: " + servedThisHour);
-
-				//The Hour Begins
-				for(int i = 0; i < gen.nextInt(customerRange) + customerBase ;i++){
-					int type = gen.nextInt(Drink.types.length);
-					int size= gen.nextInt(Drink.prices[0].length);
-					Customer customer = new Customer(type,size);
-					line.add(customer);
-				}
-				//			System.err.println("new customers: " + count);
-				//			System.err.println("cusomters: " + line.size());
-
-
-				if(servedThisHour>line.size())servedThisHour = line.size();
-
-				int startMoney = money;
-				for(int i = 0; i < servedThisHour; i++){
-					money += Employee.makeCoffee(line.pop());
-				}
+				revenue = cupright.Run();//sets the revenue for the hour
 				System.out.println();
-				System.out.println("Hour " + hour + " Report:");
-				System.out.println("Revenue: " + (money-startMoney+employees.length*Employee.salaryPerHour));
-				System.out.println("Net Gain from the hour: " + (money-startMoney-employees.length*Employee.salaryPerHour));
-				System.out.println("Total Earnings: " + money);
-				
+				System.out.println("Hour " + hour + ":");
+				System.out.println("Hourly Revenue: " + revenue);
+				revenue -= cupright.employees.length*cupright.employees[0].salaryPerHour;
+				System.out.println("Hourly Net Gain: " + revenue);
+				cupright.money += revenue;
+				System.out.println("Total Profit: " + cupright.money);
+
 				if(hourly){
-					System.out.println("would you like to see another hour(y/n)");
-					String continueHourly = scan.nextLine();
-					hourly = true;
-					if(continueHourly.equals("n")){
-						hourly = false;
-						System.out.println("Goodbye");
+					while(true){
+						System.out.println("Would you like to see another hour?(y/n)");
+						String continueHourly = scan.nextLine();
+						hourly = true;
+						if(continueHourly.equals("n")){
+							hourly = false;
+						}
+						if(continueHourly.equals("n")||continueHourly.equals("y"))break;//continues  until either yes or no 
 					}
 				}
-
-
-
 			}
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println("Final Report: ");
-			System.out.println("Revenue: " + (money+(employees.length*Employee.salaryPerHour*hourMod*9)));
-			System.out.println("Net Earnings: " + money);
 
+			System.out.println();
+			System.out.println("Final Report");
+			System.out.println("Total Revenue: " + (cupright.money+(cupright.employees.length*cupright.employees[0].salaryPerHour*hour) ));
+			System.out.println("Final Prifit: " + cupright.money);
 
-			System.out.println("would you like to see another report(y/n)");
-			String continueHourly = scan.nextLine();
-			continueReports = true;
-			if(continueHourly.equals("n")){
-				continueReports = false;
-				System.out.println("Goodbye");
+			while(true){
+				System.out.println("Would you like to see another report?(y/n)");
+				String moreReports = scan.nextLine();
+				continueReports = true;
+				if(moreReports.equals("n")){
+					continueReports = false;
+					System.out.println("Goodbye");
+					scan.close();
+				}
+				if(moreReports.equals("y") || moreReports.equals("n"))break;//continues until a yes or no
+
 			}
 		}
 
@@ -132,5 +111,74 @@ public class CuprightCoffee{
 
 
 	}
+}
+
+class CoffeeShop{
+	/**
+	 * 
+	 * @param customerRange_
+	 * @param customerBase_
+	 * @param numEmployees_
+	 * @param serviceRange_
+	 * @param serviceBase_
+	 */
+	
+	CoffeeShop(int customerRange_, int customerBase_, int numEmployees_, int serviceRange_, int serviceBase_ ){
+		customerRange = customerRange_;
+		customerBase = customerBase_;
+		numEmployees = numEmployees_;
+		serviceRange = serviceRange_;
+		serviceBase = serviceBase_;
+		Employee[] employees_ = new Employee[numEmployees];
+		employees = employees_.clone();
+	}
+	
+	static LinkedList<Customer> line = new LinkedList<Customer>();
+	
+	int customerRange;
+	int customerBase;
+	static int numEmployees;
+	int serviceRange;
+	int serviceBase;
+
+
+	double money;
+	double startMoney;
+	Employee[] employees;
+
+
+	/**
+	 * 
+	 * @return the money gained in an hour
+	 */
+	double Run(){
+		double money_ = 0;
+		Random gen = new Random();
+		int servedThisHour = 0;
+
+		for(int i = 0; i<employees.length;i++){
+			employees[i] = new Employee(gen.nextInt(serviceRange)+serviceBase);//sets the amount an employee can serve
+			servedThisHour += employees[i].peoplePerHour;//sums up those amounts
+		}
+
+		int numCustomers = gen.nextInt(customerRange) + customerBase;//sets the amount of costumers for an hour
+		for(int i = 0; i <  numCustomers ;i++){
+			int type = gen.nextInt(Drink.types.length);//randomly generates the type
+			int size= gen.nextInt(Drink.prices[0].length);//randomly generates the size
+			Customer customer = new Customer(type,size);
+			line.add(customer);//adds the costumer to the line 
+		}
+		if(servedThisHour>line.size())servedThisHour = line.size();//if the employees can serve more than come, they just serve as many that come
+
+		startMoney = money_;
+		for(int i = 0; i < servedThisHour; i++){
+			money_ += Employee.makeCoffee(line.pop());//gives the first person in line to the employee to make coffee.
+		}
+		return money_;
+	}
+
+
+
+
 }
 
