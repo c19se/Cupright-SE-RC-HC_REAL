@@ -75,41 +75,6 @@ public class Starbucks {
 		
 		
 
-		
-//		boolean newInit = true;
-//		int initHour = 0;
-//		int initOrder = 0;
-//		char initWeekDay = 0;
-//		List<Integer> customersPerHour = new ArrayList<Integer>();
-//		int count = 0;
-
-//		for(int i = 0; i < data.length; i++){
-//			if(newInit){
-//				initWeekDay = data[i].weekDay;
-//				initHour = data[i].time;
-//				initOrder = data[i].orderNumber;
-//				newInit = false;
-//			}
-//			if(initWeekDay != data[i].weekDay){
-//				newInit = true;
-//				continue;
-//			}
-//			if(data[i].time > initHour + 60 || data[i].time == initHour + 60){
-//				customersPerHour.add((data[i].orderNumber-initOrder));  
-//				count++;
-//			}
-//		}
-//		
-//		
-//		int sumCustomers = 0;
-//		for(int j = 0; j < customersPerHour.size(); j++){
-//			sumCustomers += customersPerHour.get(j);
-//			
-//		}
-//		int averageCustomers = sumCustomers/customersPerHour.size();
-//		System.out.println(averageCustomers);
-		
-
 
 	}
 
