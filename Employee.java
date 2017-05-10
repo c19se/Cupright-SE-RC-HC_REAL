@@ -1,20 +1,25 @@
 public class Employee{
-	static int salaryPerHour = 10;
+	final int salaryPerHour = 10;
 	int peoplePerHour;
 	public Employee(int peoplePerHour_){
 		peoplePerHour = peoplePerHour_;
 	}
 
+	/**
+	 * 
+	 * @param a costumer
+	 * @return the cost of their drink
+	 */
 	static double makeCoffee(Customer c){
-		double cost = 0;
+		double price = 0;
 		for(int i = 0; i<Drink.types.length; i++){
 			if(c.drink.type.equals(Drink.types[i])){
-				cost = Drink.prices[i][c.drink.size];
+				price = Drink.prices[i][c.drink.size];
 				//				System.out.println(cost);
 				break;
 			}
 		}
-		return cost;
+		return price;
 	}
 
 
